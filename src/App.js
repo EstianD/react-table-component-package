@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import TableComponent from "./TableComponent";
+
+const url = "https://randomuser.me/api/?results=20";
 
 function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    async function getLocations() {
+      let locationsArray = [];
+
+      const response = await axios.get(url);
+
+      const { results } = response.data;
+
+      console.log("RESPONSE: ", results);
+
+      if (results) {
+        results.map((user) => {
+          locationsArray.push(user.location);
+        });
+      }
+
+      // console.log(locationsArray);
+
+      // set data
+      setData(locationsArray);
+    }
+
+    getLocations();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TableComponent dataArray={data} />
     </div>
   );
 }
