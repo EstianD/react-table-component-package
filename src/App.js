@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import TableComponent from "./TableComponent";
 
-const url = "https://randomuser.me/api/?results=20";
+const url = "https://randomuser.me/api/?results=100";
 
 function App() {
   const [data, setData] = useState([]);

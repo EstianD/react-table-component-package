@@ -5,10 +5,13 @@ function useTableComponent(dataArray) {
   const [flattenedData, setFlattenedData] = useState([]);
   const [sortedElement, setSortedElement] = useState(null);
   const [searchInput, setSearchInput] = useState("");
-  const [filteredResults, setFilteredResults] = useState([]);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    flattenArray(dataArray);
+    const flattenedArray = flattenArray(dataArray);
+    setFlattenedData(flattenedArray);
+    setData(flattenedArray);
+    //  setMounted(true);
   }, [dataArray]);
 
   function flattenArray(array) {
@@ -18,9 +21,7 @@ function useTableComponent(dataArray) {
       // Flatten Object and push to new array
       ObjArray.push(flattenObject(obj));
     });
-
-    setFlattenedData(ObjArray);
-    setData(ObjArray);
+    return ObjArray;
   }
 
   //   UseEffect to run on search input change
@@ -30,10 +31,26 @@ function useTableComponent(dataArray) {
 
       let filtered = flattenedData.filter((row) => {
         return Object.values(row).some((s) =>
-          ("" + s).toLowerCase().includes(searchInput)
+          ("" + s).toLowerCase().includes(searchInput.toLowerCase())
         );
       });
-      setData(filtered);
+      console.log(filtered);
+
+      if (filtered.length > 0) {
+        setData(filtered);
+      } else {
+        // if filtered array is empty
+        let emptyObject = {};
+        let emptyArray = [];
+
+        Object.keys(flattenedData[0]).map((key) => {
+          emptyObject[key] = "";
+        });
+        // Push empty object of keys to array and set the data
+        emptyArray.push(emptyObject);
+        setData(emptyArray);
+      }
+
       // console.log(filtered);
     } else {
       console.log("no filter");
@@ -113,7 +130,13 @@ function useTableComponent(dataArray) {
     setSearchInput(e.target.value);
   }
 
-  return { data, handleHeadingClicked, searchInput, handleSearchChange };
+  return {
+    data,
+    handleHeadingClicked,
+    searchInput,
+    handleSearchChange,
+    mounted,
+  };
 }
 
 export default useTableComponent;
