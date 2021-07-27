@@ -2,24 +2,45 @@ import { useState, useEffect } from "react";
 
 function useTableComponent(dataArray) {
   const [data, setData] = useState([]);
+  const [flattenedData, setFlattenedData] = useState([]);
   const [sortedElement, setSortedElement] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
 
   useEffect(() => {
+    flattenArray(dataArray);
+  }, [dataArray]);
+
+  function flattenArray(array) {
     let ObjArray = [];
-    console.log(dataArray);
-
     // loop through object
-    dataArray.map((obj) => {
-      // console.log("OBJ: ", obj);
-
+    array.map((obj) => {
       // Flatten Object and push to new array
       ObjArray.push(flattenObject(obj));
     });
 
-    //  console.log("ARRAY: ", ObjArray);
-
+    setFlattenedData(ObjArray);
     setData(ObjArray);
-  }, [dataArray]);
+  }
+
+  //   UseEffect to run on search input change
+  useEffect(() => {
+    if (searchInput.length > 0) {
+      console.log("search change");
+
+      let filtered = flattenedData.filter((row) => {
+        return Object.values(row).some((s) =>
+          ("" + s).toLowerCase().includes(searchInput)
+        );
+      });
+      setData(filtered);
+      // console.log(filtered);
+    } else {
+      console.log("no filter");
+
+      setData(flattenedData);
+    }
+  }, [searchInput]);
 
   // Flatten Object function
   function flattenObject(obj) {
@@ -60,7 +81,7 @@ function useTableComponent(dataArray) {
     setData(sortingArray);
   }
 
-  //   Sorting functions
+  // Sorting functions
   // Sort alphabetically
   function sortAlphabetically(arr, element) {
     return arr.sort((a, b) => {
@@ -87,7 +108,12 @@ function useTableComponent(dataArray) {
     });
   }
 
-  return { data, handleHeadingClicked };
+  // Handle search change
+  function handleSearchChange(e) {
+    setSearchInput(e.target.value);
+  }
+
+  return { data, handleHeadingClicked, searchInput, handleSearchChange };
 }
 
 export default useTableComponent;
