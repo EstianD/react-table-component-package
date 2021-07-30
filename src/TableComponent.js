@@ -5,13 +5,8 @@ function TableComponent({ dataArray }) {
   console.log("INPUT: ", dataArray);
 
   //   Write some props for accepting stylling props
-  const {
-    data,
-    handleHeadingClicked,
-    searchInput,
-    handleSearchChange,
-    mounted,
-  } = useTableComponent(dataArray);
+  const { data, handleHeadingClicked, searchInput, handleSearchChange } =
+    useTableComponent(dataArray);
 
   return (
     <div>

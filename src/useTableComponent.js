@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 
 function useTableComponent(dataArray) {
+  console.log("DATA ARRAY: ", dataArray);
+
   const [data, setData] = useState([]);
   const [flattenedData, setFlattenedData] = useState([]);
   const [sortedElement, setSortedElement] = useState(null);
   const [searchInput, setSearchInput] = useState("");
-  const [mounted, setMounted] = useState(false);
+  //   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const flattenedArray = flattenArray(dataArray);
@@ -15,10 +17,13 @@ function useTableComponent(dataArray) {
   }, [dataArray]);
 
   function flattenArray(array) {
+    console.log("flatten array: ", array);
+
     let ObjArray = [];
     // loop through object
     array.map((obj) => {
       // Flatten Object and push to new array
+      // console.log(obj);
       ObjArray.push(flattenObject(obj));
     });
     return ObjArray;
@@ -59,23 +64,25 @@ function useTableComponent(dataArray) {
     }
   }, [searchInput]);
 
-  // Flatten Object function
-  function flattenObject(obj) {
-    let flattenedObj = {};
-    const keysArray = Object.keys(obj);
+  function flattenObject(obj, newObj = {}) {
+    //  console.log(obj);
 
-    keysArray.map((key) => {
+    Object.keys(obj).map((key) => {
       if (typeof obj[key] === "object") {
-        const innerKeys = Object.keys(obj[key]);
+        // console.log('is a object')
 
-        innerKeys.map((innerKey) => {
-          flattenedObj[innerKey] = obj[key][innerKey];
-        });
+        flattenObject(obj[key], newObj);
       } else {
-        flattenedObj[key] = obj[key];
+        if (obj[key] === "" || obj[key] === null) {
+          newObj[key] = "";
+        } else {
+          newObj[key] = obj[key];
+        }
       }
     });
-    return flattenedObj;
+    console.log("OBJ: ", newObj);
+
+    return newObj;
   }
 
   //   Handle heading clicks for sorting
@@ -135,7 +142,6 @@ function useTableComponent(dataArray) {
     handleHeadingClicked,
     searchInput,
     handleSearchChange,
-    mounted,
   };
 }
 

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import TableComponent from "./TableComponent";
 
-const url = "https://randomuser.me/api/?results=100";
+const url = "https://randomuser.me/api/?results=10";
 
 function App() {
   const [data, setData] = useState([]);
@@ -16,10 +16,14 @@ function App() {
 
       const { results } = response.data;
 
+      // setData(results);
+
       console.log("RESPONSE: ", results);
 
       if (results) {
         results.map((user) => {
+          // console.log("user: ", user);
+
           locationsArray.push(user.location);
         });
       }
@@ -34,9 +38,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <TableComponent dataArray={data} />
-    </div>
+    <div className="App">{data && <TableComponent dataArray={data} />}</div>
   );
 }
 
